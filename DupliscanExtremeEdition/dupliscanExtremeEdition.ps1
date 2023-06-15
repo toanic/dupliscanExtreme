@@ -74,7 +74,7 @@ try {
     $latestVersion = Invoke-WebRequest -Uri "https://raw.githubusercontent.com/toanic/dupliscanExtreme/main/DupliscanExtremeEdition/VERSION" -UseBasicParsing
     $latestVersion = $latestVersion.Content
 
-    $latestVersion = $latestVersion.Substring(41, 5)
+    $latestVersion = $latestVersion.Substring(42, 5)
 
     if ((($version.GetType()).BaseType).Name -eq "Array") {
         $version = $version[2].Substring(26)
@@ -90,22 +90,15 @@ try {
         Write-Host ""
         coloredOutput " Update now? "
         coloredText "(" "y" "/" "n" ")"
-        <#
-        Write-Host -ForegroundColor Green -NoNewline "("
-        Write-Host -ForegroundColor Cyan  -NoNewline "y"
-        Write-Host -ForegroundColor Green -NoNewline "/"
-        Write-Host -ForegroundColor Cyan  -NoNewline "n"
-        Write-Host -ForegroundColor Green -NoNewline ")"
-        #>
         $update = Read-Host " "
 
         if ($update.ToUpper() -eq "Y") {
             Write-Host ""
             coloredOutput " Updating..." 1
 
-            #$script = Invoke-WebRequest -Uri "https://raw.githubusercontent.com/simonrenggli1/dupliscan/master/DupliScan.ps1" -UseBasicParsing
-            #$script = $script.Content
-            #$script | Out-File -FilePath ".\dupliscanExp.ps1" -Force
+            $script = Invoke-WebRequest -Uri "https://raw.githubusercontent.com/simonrenggli1/dupliscan/master/DupliScan.ps1" -UseBasicParsing
+            $script = $script.Content
+            $script | Out-File -FilePath ".\dupliscan.ps1" -Force
 
             $version = Invoke-WebRequest -Uri "https://raw.githubusercontent.com/toanic/dupliscanExtreme/main/DupliscanExtremeEdition/VERSION" -UseBasicParsing
             $version = $version.Content
@@ -140,11 +133,6 @@ Write-Host -ForegroundColor Cyan             " Scan custom directory"
 Write-Host ""
 coloredOutput " Select mode "
 coloredText "(" "1-2" ")"
-<#
-Write-Host -ForegroundColor Green -NoNewline "("
-Write-Host -ForegroundColor Cyan  -NoNewline "1-2"
-Write-Host -ForegroundColor Green -NoNewline ")"
-#>
 $mode = Read-Host " "
 
 if ($mode -eq "") {
@@ -185,19 +173,9 @@ if ($mode -eq 1) {
     coloredOutput " Select partition "
     if ($number -eq 1){
         coloredText "(" 1 ")"
-        <#
-        Write-Host -ForegroundColor Green -NoNewline "("
-        Write-Host -ForegroundColor Cyan  -NoNewline "1"
-        Write-Host -ForegroundColor Green -NoNewline ")"
-        #>
     }
     else {
         coloredText "(" "1-$number" ")"
-        <#
-        Write-Host -ForegroundColor Green -NoNewline "("
-        Write-Host -ForegroundColor Cyan  -NoNewline "1-$number"
-        Write-Host -ForegroundColor Green -NoNewline ")"
-        #>
     }
     $partitionSelected = Read-Host " "
 
