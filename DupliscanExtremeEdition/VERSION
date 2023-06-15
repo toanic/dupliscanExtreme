@@ -1,7 +1,7 @@
 
      ______
-    | __   \	DupliScan 0.1.6
-    | _ __  |	a duplicate file scanner by simonrenggli1
-    | ____  |	maintained by simonrenggli1
-    | __ _  |	https://github.com/simonrenggli1/dupliscan
-    |_______|
+    | __   \	DupliScanEXT 1.1.4
+    | _ __  |	a duplicate file scanner by toanic
+    | ____  |	maintained by toanic
+    | __ _  |	based on DupliScan by simonrenggli1
+    |_______|  https://github.com/toanic/dupliscan
