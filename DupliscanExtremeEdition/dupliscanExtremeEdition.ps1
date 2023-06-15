@@ -25,6 +25,7 @@ if ([System.Environment]::OSVersion.Version.Major -lt 6) {
 }
 
 if (-not (Test-Path -Path ".\VERSION")) {
+    Write-Host ""
     Write-Host -ForegroundColor Red "[!] VERSION file not found"
     Write-Host ""
     New-Item -Path ".\VERSION" -ItemType File -Force | Out-Null
@@ -33,7 +34,7 @@ if (-not (Test-Path -Path ".\VERSION")) {
 
 $version = Get-Content -Path ".\VERSION"
 
-if (($version.GetType() | Select-Object BaseType) -eq "System.Array"){
+if ((($version.GetType()).BaseType).Name -eq "Array"){
 Write-Host ""
 Write-Host -ForegroundColor White            $version[1]
 Write-Host -ForegroundColor White -NoNewLine $version[2].Substring(0, 13)
@@ -61,16 +62,19 @@ Write-Host -ForegroundColor Green -NoNewline " Checking for updates..."
 Write-Host ""
 
 try {
-    $latestVersion = Invoke-WebRequest -Uri "https://raw.githubusercontent.com/toanic/dupliscanExtreme/main/VERSION" -UseBasicParsing
+    $latestVersion = Invoke-WebRequest -Uri "https://raw.githubusercontent.com/toanic/dupliscanExtreme/main/DupliscanExtremeEdition/VERSION" -UseBasicParsing
     $latestVersion = $latestVersion.Content
 
-    $latestVersion = $latestVersion.Replace("`n", "")
-    $latestVersion = $latestVersion.Replace("`r", "")
+    $latestVersion = $latestVersion.Substring(38, 5)
 
-    if ($latestVersion -gt $version[2].Substring(23)) {
+    if ((($version.GetType()).BaseType).Name -eq "Array") {
+        $version = $version[2].Substring(23)
+    }
+
+    if ($latestVersion -gt $version) {
         coloredOutput [ + ]
         Write-Host -ForegroundColor Green -NoNewline " Current version "
-        Write-Host -ForegroundColor Cyan -NoNewline $version[2].Substring(23)
+        Write-Host -ForegroundColor Cyan -NoNewline $version
         Write-Host ""
 
         coloredOutput [ + ]
@@ -91,11 +95,11 @@ try {
             Write-Host -ForegroundColor Green -NoNewline " Updating..."
             Write-Host ""
 
-            $script = Invoke-WebRequest -Uri "https://raw.githubusercontent.com/simonrenggli1/dupliscan/master/DupliScan.ps1" -UseBasicParsing
-            $script = $script.Content
-            $script | Out-File -FilePath ".\dupliscanExp.ps1" -Force
+            #$script = Invoke-WebRequest -Uri "https://raw.githubusercontent.com/simonrenggli1/dupliscan/master/DupliScan.ps1" -UseBasicParsing
+            #$script = $script.Content
+            #$script | Out-File -FilePath ".\dupliscanExp.ps1" -Force
 
-            $version = Invoke-WebRequest -Uri "https://raw.githubusercontent.com/simonrenggli1/dupliscan/master/VERSION" -UseBasicParsing
+            $version = Invoke-WebRequest -Uri "https://raw.githubusercontent.com/toanic/dupliscanExtreme/main/DupliscanExtremeEdition/VERSION" -UseBasicParsing
             $version = $version.Content
             $version | Out-File -FilePath ".\VERSION" -Force
             
@@ -172,6 +176,8 @@ if ($mode -eq 1) {
         #coloredOutput "$partitionName        " "$size" ""
         Write-Host -ForegroundColor Cyan "$size"
     }
+
+    Write-Host ""
     coloredOutput [ + ]
     Write-Host -ForegroundColor Green -NoNewline " Select partition "
     if ($number -eq 1){
@@ -181,7 +187,6 @@ if ($mode -eq 1) {
     coloredOutput "(" "1-$number" ")"
     }
     $partitionSelected = Read-Host " "
-    Write-Host ""
 
     if ($partitionSelected -eq "") {
         Write-Host -ForegroundColor Red "[!] No input"
@@ -311,7 +316,7 @@ try {
     Add-Content -Path ".\DupliScan.log" -Value "----------------------------------"
     Add-Content -Path ".\DupliScan.log" -Value "Duplicate Files Found:"
     Add-Content -Path ".\DupliScan.log" -Value "----------------------------------"
-    Add-Content -Path ".\DupliScan.log" -Value ""
+    #Add-Content -Path ".\DupliScan.log" -Value ""
 
     foreach ($key in $fileInfo.Keys) {
         try {
@@ -329,7 +334,6 @@ try {
                     Write-Host -ForegroundColor Red "[!] $duplicatePath"
                     Add-Content -Path ".\DupliScan.log" -Value "    - $duplicatePath"
                 }
-                Add-Content -Path ".\DupliScan.log" -Value ""
             }
         }
         catch {
