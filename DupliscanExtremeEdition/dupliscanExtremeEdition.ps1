@@ -1,6 +1,6 @@
 $Host.UI.RawUI.WindowTitle = "Windows Powershell " + $Host.Version;
 
-function coloredOutput ($text1, $text2, $text3, [int]$scheme = 0){
+function coloredOutput ($text1, $text2, $text3, [int] $scheme = 0) {
     if ($scheme -eq 0){
         Write-Host -ForegroundColor Green -NoNewline $text1
         Write-Host -ForegroundColor Cyan -NoNewline $text2
@@ -24,16 +24,19 @@ function coloredOutput ($text1, $text2, $text3, [int]$scheme = 0){
     }
 }
 
-if ([System.Environment]::OSVersion.Version.Major -lt 6) {
-    Write-Host -ForegroundColor Red "[!] Unsupported operating system"
+function errorHandling ([string]$errorMessage ){
     Write-Host ""
+    Write-Host -ForegroundColor Red "[!] $errorMessage"
+    Write-Host ""
+}
+
+if ([System.Environment]::OSVersion.Version.Major -lt 6) {
+    errorHandling "Unsupported operating system"
     exit
 }
 
 if (-not (Test-Path -Path ".\VERSION")) {
-    Write-Host ""
-    Write-Host -ForegroundColor Red "[!] VERSION file not found"
-    Write-Host ""
+    errorHandling "VERSION file not found"
     New-Item -Path ".\VERSION" -ItemType File -Force | Out-Null
     Add-Content -Path ".\VERSION" -Value "0.0.0" | Out-Null
 }
@@ -126,8 +129,7 @@ try {
     }
 }
 catch {
-    Write-Host -ForegroundColor Red "[!] Failed to check for updates"
-    Write-Host ""
+    errorHandling "Failed to check for updates"
 }
 
 Write-Host ""
@@ -144,16 +146,12 @@ coloredOutput "(" "1-2" ")"
 $mode = Read-Host " "
 
 if ($mode -eq "") {
-    Write-Host ""
-    Write-Host -ForegroundColor Red "[!] No input"
-    Write-Host ""
+    errorHandling "No input"
     exit
 }
 
 if ($mode -lt 1 -or $mode -gt 2) {
-    Write-Host ""
-    Write-Host -ForegroundColor Red "[!] Out of range"
-    Write-Host ""
+    errorHandling "Out of range"
     exit
 }
 
@@ -176,7 +174,6 @@ if ($mode -eq 1) {
         $number = $number + 1
         $partitionName = $partition.DriveLetter
         coloredOutput "" "$number" ".  $partitionName        "
-        #coloredOutput "$partitionName        " "$size" ""
         Write-Host -ForegroundColor Cyan "$size"
     }
 
@@ -191,14 +188,12 @@ if ($mode -eq 1) {
     $partitionSelected = Read-Host " "
 
     if ($partitionSelected -eq "") {
-        Write-Host -ForegroundColor Red "[!] No input"
-        Write-Host ""
+        errorHandling "No input"
         exit
     }
 
     if ($partitionSelected -lt 1 -or $partitionSelected -gt $number) {
-        Write-Host -ForegroundColor Red "[!] Out of range"
-        Write-Host ""
+        errorHandling "Out of Range"
         exit
     }
 
@@ -217,23 +212,17 @@ if ($mode -eq 2) {
     $path = Read-Host " "
 
     if ($path -eq "") {
-        Write-Host ""
-        Write-Host -ForegroundColor Red "[!] No input"
-        Write-Host ""
+        errorHandling "No input"
         exit
     }
 
     if (-not (Test-Path $path)) {
-        Write-Host ""
-        Write-Host -ForegroundColor Red "[!] Path does not exist"
-        Write-Host ""
+        errorHandling "Path does not exist"
         exit
     }
 
     if (-not (Test-Path $path -PathType Container)) {
-        Write-Host ""
-        Write-Host -ForegroundColor Red "[!] Path is not a directory"
-        Write-Host ""
+        errorHandling "Path is not a directory"
         exit
     }
 
@@ -269,7 +258,7 @@ function CheckDuplicate($filePath, $fileName, $fileSize) {
         }
     }
     catch {
-        Write-Host -ForegroundColor Red "[!] Error occurred while checking duplicate: $_"
+        errorHandling "Error occured while checking duplicate: $_"
     }
 }
 
@@ -285,7 +274,7 @@ try {
             CheckDuplicate -filePath $filePath -fileName $fileName -fileSize $fileSize
         }
         catch {
-            Write-Host -ForegroundColor Red "[!] Error occurred while processing file: $_"
+            errorHandling "Error occured while processing file: $_"
         }
     }
 
@@ -293,7 +282,6 @@ try {
         New-Item -Path ".\DupliScan.log" -ItemType File -Force | Out-Null
         Add-Content -Path ".\DupliScan.log" -Value "== DupliScan Log ==" | Out-Null
     }
-    #if ((Get-Content -Path ".\DupliScan.log") -eq "") {
     else {
         Add-Content -Path ".\DupliScan.log" -Value "== DupliScan Log ==" | Out-Null
     }
@@ -317,7 +305,6 @@ try {
     Add-Content -Path ".\DupliScan.log" -Value "----------------------------------"
     Add-Content -Path ".\DupliScan.log" -Value "Duplicate Files Found:"
     Add-Content -Path ".\DupliScan.log" -Value "----------------------------------"
-    #Add-Content -Path ".\DupliScan.log" -Value ""
 
     foreach ($key in $fileInfo.Keys) {
         try {
