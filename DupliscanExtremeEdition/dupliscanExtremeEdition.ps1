@@ -16,6 +16,12 @@ function coloredOutput ($text1, $text2, $text3, [int]$scheme = 0){
         Write-Host -ForegroundColor Red -NoNewline $text2
         Write-Host -ForegroundColor Yellow -NoNewline $text3
     }
+    if ($scheme -eq 3){
+        Write-Host ""
+        Write-Host -ForegroundColor Green -NoNewline $text1
+        Write-Host -ForegroundColor Cyan -NoNewline $text2
+        Write-Host -ForegroundColor Green -NoNewline $text3
+    }
 }
 
 if ([System.Environment]::OSVersion.Version.Major -lt 6) {
@@ -35,19 +41,20 @@ if (-not (Test-Path -Path ".\VERSION")) {
 $version = Get-Content -Path ".\VERSION"
 
 if ((($version.GetType()).BaseType).Name -eq "Array"){
-Write-Host ""
-Write-Host -ForegroundColor White            $version[1]
-Write-Host -ForegroundColor White -NoNewLine $version[2].Substring(0, 13)
-Write-Host -ForegroundColor Cyan -NoNewLine  $version[2].Substring(13, 10)
-Write-Host -ForegroundColor DarkCyan         $version[2].Substring(23)
-Write-Host -ForegroundColor White -NoNewLine $version[3].Substring(0, 14)
-Write-Host -ForegroundColor DarkGreen        $version[3].Substring(14)
-Write-Host -ForegroundColor White -NoNewLine $version[4].Substring(0, 14)
-Write-Host -ForegroundColor DarkGreen        $version[4].Substring(14)
-Write-Host -ForegroundColor White -NoNewLine $version[5].Substring(0, 14)
-Write-Host -ForegroundColor DarkMagenta      $version[5].Substring(14)
-Write-Host -ForegroundColor White            $version[6].Substring(0, 13)
-Write-Host ""
+    Write-Host ""
+    Write-Host -ForegroundColor White                  $version[1]
+    Write-Host -ForegroundColor White       -NoNewLine $version[2].Substring(0, 13)
+    Write-Host -ForegroundColor Cyan        -NoNewLine $version[2].Substring(13, 12)
+    Write-Host -ForegroundColor DarkCyan               $version[2].Substring(25)
+    Write-Host -ForegroundColor White       -NoNewLine $version[3].Substring(0, 14)
+    Write-Host -ForegroundColor DarkGreen              $version[3].Substring(14)
+    Write-Host -ForegroundColor White       -NoNewLine $version[4].Substring(0, 14)
+    Write-Host -ForegroundColor DarkGreen              $version[4].Substring(14)
+    Write-Host -ForegroundColor White       -NoNewLine $version[5].Substring(0, 14)
+    Write-Host -ForegroundColor DarkMagenta            $version[5].Substring(14)
+    Write-Host -ForegroundColor White       -NoNewLine $version[6].Substring(0, 13)
+    Write-Host -ForegroundColor DarkMagenta            $version[6].Substring(13)
+    Write-Host ""
 }
 
 if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
@@ -65,7 +72,7 @@ try {
     $latestVersion = Invoke-WebRequest -Uri "https://raw.githubusercontent.com/toanic/dupliscanExtreme/main/DupliscanExtremeEdition/VERSION" -UseBasicParsing
     $latestVersion = $latestVersion.Content
 
-    $latestVersion = $latestVersion.Substring(38, 5)
+    $latestVersion = $latestVersion.Substring(41, 5)
 
     if ((($version.GetType()).BaseType).Name -eq "Array") {
         $version = $version[2].Substring(23)
@@ -81,17 +88,15 @@ try {
         Write-Host -ForegroundColor Green -NoNewline " Latest version "
         Write-Host -ForegroundColor Cyan -NoNewline $latestVersion
         Write-Host ""
-        Write-Host ""
 
-        coloredOutput [ + ]
+        coloredOutput [ + ] 3
         Write-Host -ForegroundColor Green -NoNewLine " Update now? "
         coloredOutput "(" "y" "/"
         coloredOutput "" "n" ") "
         $update = Read-Host " "
 
         if ($update.ToUpper() -eq "Y") {
-            Write-Host ""
-            coloredOutput [ + ]
+            coloredOutput [ + ] 3
             Write-Host -ForegroundColor Green -NoNewline " Updating..."
             Write-Host ""
 
@@ -103,8 +108,7 @@ try {
             $version = $version.Content
             $version | Out-File -FilePath ".\VERSION" -Force
             
-            Write-Host ""
-            coloredOutput [ + ]
+            coloredOutput [ + ] 3
             coloredOutput " Updated to " $latestVersion ""
             Write-Host ""
             exit
@@ -154,8 +158,7 @@ if ($mode -lt 1 -or $mode -gt 2) {
 }
 
 if ($mode -eq 1) {
-    Write-Host ""
-    coloredOutput [ + ]
+    coloredOutput [ + ] 3
     Write-Host -ForegroundColor Green " Scanning partitions..."
     Write-Host ""
 
@@ -177,8 +180,7 @@ if ($mode -eq 1) {
         Write-Host -ForegroundColor Cyan "$size"
     }
 
-    Write-Host ""
-    coloredOutput [ + ]
+    coloredOutput [ + ] 3
     Write-Host -ForegroundColor Green -NoNewline " Select partition "
     if ($number -eq 1){
     coloredOutput "(" "1" ")"
@@ -235,7 +237,7 @@ if ($mode -eq 2) {
         exit
     }
 
-    coloredOutput [ + ]
+    coloredOutput [ + ] 3
     Write-Host -ForegroundColor Green " Scanning directory..."
 
     $fileInfo = @{}
@@ -303,8 +305,7 @@ try {
     Add-Content -Path ".\DupliScan.log" -Value ""
 
     if ($fileInfo.Count -eq 0) {
-        Write-Host ""
-        coloredOutput [ + ]
+        coloredOutput [ + ] 3
 
         Write-Host -ForegroundColor Green -NoNewline " No duplicates found"
         Write-Host ""
@@ -345,8 +346,7 @@ catch {
     Write-Host -ForegroundColor Red "[!] Error occurred while scanning partition: $_"
 }
 
-Write-Host ""
-coloredOutput [ + ]
+coloredOutput [ + ] 3
 Write-Host -ForegroundColor Green " Done"
 Write-Host ""
 
