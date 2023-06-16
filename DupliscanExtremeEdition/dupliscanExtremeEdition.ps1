@@ -1,12 +1,12 @@
-$Host.UI.RawUI.WindowTitle = "Windows Powershell " + $Host.Version;
+# modify CLI window name
+$Host.UI.RawUI.WindowTitle = "DupliScanEXT "
 
 # function for colored information text
 function coloredOutput ($text1, [int] $scheme = 0) {
     if ($scheme -eq 0) {
         Write-Host -ForegroundColor Green -NoNewLine "["
         Write-Host -ForegroundColor Cyan  -NoNewLine "+"
-        Write-Host -ForegroundColor Green -NoNewLine "] "
-        Write-Host -ForegroundColor Green -NoNewLine $text1
+        Write-Host -ForegroundColor Green -NoNewLine "] $text1"
     }
     if ($scheme -eq 1) {
         Write-Host -ForegroundColor Green -NoNewLine "["
@@ -18,8 +18,7 @@ function coloredOutput ($text1, [int] $scheme = 0) {
         Write-Host ""
         Write-Host -ForegroundColor Yellow -NoNewLine "["
         Write-Host -ForegroundColor Red    -NoNewLine "!"
-        Write-Host -ForegroundColor Yellow -NoNewLine "] "
-        Write-Host -ForegroundColor Yellow -NoNewLine $text1
+        Write-Host -ForegroundColor Yellow -NoNewLine "] $text1"
     }
 }
 
@@ -74,12 +73,15 @@ if ((($version.GetType()).BaseType).Name -eq "Array") {
     Write-Host -ForegroundColor DarkMagenta            $version[6].Substring(13)
 
     $version = $version[2].Substring(26)
+
+    # modify CLI window name
+    $Host.UI.RawUI.WindowTitle += $version
 }
 
 # check for administrator mode
 if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
-    coloredOutput "Warning: Recommended to run as" 2
-    Write-Host -ForegroundColor Red               " administrator"
+    coloredOutput "Warning: Recommended to run as " 2
+    Write-Host -ForegroundColor Red "administrator"
     Write-Host ""
 }
 
@@ -222,7 +224,7 @@ if ($mode -eq 1) {
     Write-Host ""
 
     $driveLetter = $partitionInfo[$partitionSelected - 1]
-    
+
     # set path to selected partition
     $path = $driveLetter + ":\"
 }
@@ -247,7 +249,7 @@ if ($mode -eq 2) {
         errorHandling "Path is not a directory"
         exit
     }
-        
+
     Write-Host ""
     coloredOutput "Scanning directory..." 1
 
