@@ -1,6 +1,11 @@
 # modify CLI window name
 $Host.UI.RawUI.WindowTitle = "DupliScanEXT "
 
+# change directory so that version can be checked and log is in the same directory
+if ((Get-Location).Path -ne $PSScriptRoot) {
+    cd $PSScriptRoot
+}
+
 # function for colored information text
 function coloredOutput ($text1, [int] $scheme = 0) {
     if ($scheme -eq 0) {
