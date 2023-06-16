@@ -43,10 +43,16 @@ function errorHandling ([string]$errorMessage, [int] $outputType = 0) {
     }
 }
 
+# function for exit
+function quit {
+    $Host.UI.RawUI.WindowTitle = $Host.Name + " " + $Host.Version;
+    exit
+}
+
 # check OS
 if ([System.Environment]::OSVersion.Version.Major -lt 6) {
     errorHandling "Unsupported operating system"
-    exit
+    quit
 }
 
 # get local VERSION
@@ -79,6 +85,11 @@ if ((($version.GetType()).BaseType).Name -eq "Array") {
 
     # modify CLI window name
     $Host.UI.RawUI.WindowTitle += $version
+}
+# ouput warning for outdated version
+else {
+    coloredOutput "Warning: Version not up to date. " 2
+    Write-Host -ForegroundColor Red "Update recommended"
 }
 
 # check for administrator mode
@@ -115,11 +126,9 @@ try {
             coloredOutput "Updating..." 1
 
             # download latest script
-            <#
             $script = Invoke-WebRequest -Uri "https://raw.githubusercontent.com/toanic/dupliscanExtreme/main/DupliscanExtremeEdition/dupliscanExtremeEdition.ps1" -UseBasicParsing
             $script = $script.Content
             $script | Out-File -FilePath ".\dupliscanExtremeEdition.ps1" -Force
-            #>
 
             # download latest VERSION
             $version = Invoke-WebRequest -Uri "https://raw.githubusercontent.com/toanic/dupliscanExtreme/main/DupliscanExtremeEdition/VERSION" -UseBasicParsing
@@ -136,7 +145,7 @@ try {
                 Write-Host ""
             }
             # end script to allow updated script to be run
-            exit
+            quit
         } 
         else {
             coloredOutput "Skipping update" 1
@@ -167,12 +176,12 @@ $mode = Read-Host " "
 
 if ($mode -eq "") {
     errorHandling "No input"
-    exit
+    quit
 }
 
 if ($mode -lt 1 -or $mode -gt 2) {
     errorHandling "Out of range"
-    exit
+    quit
 }
 
 # mode 1
@@ -213,12 +222,12 @@ if ($mode -eq 1) {
 
     if ($partitionSelected -eq "") {
         errorHandling "No input"
-        exit
+        quit
     }
 
     if ($partitionSelected -lt 1 -or $partitionSelected -gt $number) {
         errorHandling "Out of Range"
-        exit
+        quit
     }
     
     coloredOutput "Scanning partition...`n" 1
@@ -237,23 +246,21 @@ if ($mode -eq 2) {
 
     if ($path -eq "") {
         errorHandling "No input"
-        exit
+        quit
     }
 
     if (-not (Test-Path $path)) {
         errorHandling "Path does not exist"
-        exit
+        quit
     }
 
     if (-not (Test-Path $path -PathType Container)) {
         errorHandling "Path is not a directory"
-        exit
+        quit
     }
 
     Write-Host ""
     coloredOutput "Scanning directory..." 1
-
-    $fileInfo = @{}
 
     # modify $path so that directory path can be searched
     $path = $path.Trim()
@@ -307,7 +314,7 @@ try {
             errorHandling "Error occured while processing file: $_"
         }
     }
-
+    
     if (Test-Path -Path ".\DupliScan.log") {
         coloredOutput "Do you want to overwrite the existing log? "
         coloredOption "(" "y" "/" "n" ")"
@@ -335,10 +342,10 @@ try {
     # alternate ending if no duplicate files are found
     if ($fileInfo.Count -eq 0) {
         Write-Host ""
-        coloredOutput "No duplicates found" 1
+        coloredOutput "No duplicate files found" 1
 
-        Add-Content -Path ".\DupliScan.log" -Value "No duplicates found"
-        exit
+        Add-Content -Path ".\DupliScan.log" -Value "No duplicate files found"
+        quit
     }
 
     # add duplicate file header to log
@@ -386,4 +393,4 @@ Add-Content -Path ".\DupliScan.log" -Value "----------------------------------"
 Add-Content -Path ".\DupliScan.log" -Value "End of Duplicate Files Log"
 Add-Content -Path ".\DupliScan.log" -Value "----------------------------------"
 Add-Content -Path ".\DupliScan.log" -Value ""
-exit
+quit
