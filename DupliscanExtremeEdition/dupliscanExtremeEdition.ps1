@@ -241,7 +241,7 @@ if ($mode -eq 1) {
 # mode 2
 if ($mode -eq 2) {
     # allow for custom directory to be specified
-    coloredOutput "Enter custom directory "
+    coloredOutput "Enter custom directory"
     $path = Read-Host " "
 
     if ($path -eq "") {
