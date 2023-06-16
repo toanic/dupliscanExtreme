@@ -64,7 +64,7 @@ if ((($version.GetType()).BaseType).Name -eq "Array") {
     Write-Host ""
     Write-Host -ForegroundColor White                  $version[1]
     Write-Host -ForegroundColor White       -NoNewLine $version[2].Substring(0, 13)
-    Write-Host -ForegroundColor Cyan        -NoNewLine $version[2].Substring(13, 12)
+    Write-Host -ForegroundColor Cyan        -NoNewLine $version[2].Substring(13, 13)
     Write-Host -ForegroundColor DarkCyan               $version[2].Substring(26)
     Write-Host -ForegroundColor White       -NoNewLine $version[3].Substring(0, 14)
     Write-Host -ForegroundColor DarkGreen              $version[3].Substring(14)
