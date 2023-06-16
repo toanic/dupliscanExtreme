@@ -30,19 +30,21 @@ function coloredText ($text1, $text2, $text3, $text4 = "", $text5 = "") {
         Write-Host -ForegroundColor Green -NoNewline $text5
 }
 
-function errorHandling ([string]$errorMessage ) {
+function errorHandling ([string]$errorMessage, [int] $outputType = 0) {
     Write-Host ""
     Write-Host -ForegroundColor Red "[!] $errorMessage"
+    if ($outputType -eq 0) {
+        Write-Host ""
+    }
 }
 
 if ([System.Environment]::OSVersion.Version.Major -lt 6) {
     errorHandling "Unsupported operating system"
-    Write-Host ""
     exit
 }
 
 if (-not (Test-Path -Path ".\VERSION")) {
-    errorHandling "VERSION file not found"
+    errorHandling "VERSION file not found" 1
     New-Item -Path ".\VERSION" -ItemType File -Force | Out-Null
     Add-Content -Path ".\VERSION" -Value "0.0.0" | Out-Null
 }
@@ -130,7 +132,6 @@ try {
 }
 catch {
     errorHandling "Failed to check for updates"
-    Write-Host ""
 }
 
 Write-Host ""
@@ -149,13 +150,11 @@ $mode = Read-Host " "
 
 if ($mode -eq "") {
     errorHandling "No input"
-    Write-Host ""
     exit
 }
 
 if ($mode -lt 1 -or $mode -gt 2) {
     errorHandling "Out of range"
-    Write-Host ""
     exit
 }
 
@@ -195,13 +194,11 @@ if ($mode -eq 1) {
 
     if ($partitionSelected -eq "") {
         errorHandling "No input"
-        Write-Host ""
         exit
     }
 
     if ($partitionSelected -lt 1 -or $partitionSelected -gt $number) {
         errorHandling "Out of Range"
-        Write-Host ""
         exit
     }
     
@@ -219,19 +216,16 @@ if ($mode -eq 2) {
 
     if ($path -eq "") {
         errorHandling "No input"
-        Write-Host ""
         exit
     }
 
     if (-not (Test-Path $path)) {
         errorHandling "Path does not exist"
-        Write-Host ""
         exit
     }
 
     if (-not (Test-Path $path -PathType Container)) {
         errorHandling "Path is not a directory"
-        Write-Host ""
         exit
     }
 
@@ -267,7 +261,6 @@ function CheckDuplicate($filePath, $fileName, $fileSize) {
     }
     catch {
         errorHandling "Error occured while checking duplicate: $_"
-        Write-Host ""
     }
 }
 
@@ -284,7 +277,6 @@ try {
         }
         catch {
             errorHandling "Error occured while processing file: $_"
-            Write-Host ""
         }
     }
 
