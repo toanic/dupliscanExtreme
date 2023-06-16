@@ -334,7 +334,7 @@ try {
     # add information header to log
     Add-Content -Path ".\DupliScan.log" -Value "== DupliScan Log ==" | Out-Null
     Add-Content -Path ".\DupliScan.log" -Value ""
-    Add-Content -Path ".\DupliScan.log" -Value "Timestamp: [(Get-Date)]"
+    Add-Content -Path ".\DupliScan.log" -Value "Timestamp: [$(Get-Date)]"
     Add-Content -Path ".\DupliScan.log" -Value ""
     Add-Content -Path ".\DupliScan.log" -Value "Directory: $path"
     Add-Content -Path ".\DupliScan.log" -Value ""
