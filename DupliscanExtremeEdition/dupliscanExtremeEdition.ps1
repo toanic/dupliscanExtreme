@@ -1,17 +1,24 @@
 $Host.UI.RawUI.WindowTitle = "Windows Powershell " + $Host.Version;
 
 function coloredOutput ($text1, [int] $scheme = 0) {
-    if ($scheme -eq 0){
+    if ($scheme -eq 0) {
         Write-Host -ForegroundColor Green -NoNewline "["
         Write-Host -ForegroundColor Cyan  -NoNewline "+"
         Write-Host -ForegroundColor Green -NoNewline "]"
         Write-Host -ForegroundColor Green -NoNewline $text1
     }
-    if ($scheme -eq 1){
+    if ($scheme -eq 1) {
         Write-Host -ForegroundColor Green -NoNewline "["
         Write-Host -ForegroundColor Cyan  -NoNewline "+"
         Write-Host -ForegroundColor Green -NoNewline "]"
         Write-Host -ForegroundColor Green            $text1
+    }
+    if ($scheme -eq 2) {
+        Write-Host ""
+        Write-Host -ForegroundColor Yellow -NoNewline "["
+        Write-Host -ForegroundColor Red    -NoNewline "!"
+        Write-Host -ForegroundColor Yellow -NoNewline "]"
+        Write-Host -ForegroundColor Yellow -NoNewline $text1
     }
 }
 
@@ -26,11 +33,11 @@ function coloredText ($text1, $text2, $text3, $text4 = "", $text5 = "") {
 function errorHandling ([string]$errorMessage ) {
     Write-Host ""
     Write-Host -ForegroundColor Red "[!] $errorMessage"
-    Write-Host ""
 }
 
 if ([System.Environment]::OSVersion.Version.Major -lt 6) {
     errorHandling "Unsupported operating system"
+    Write-Host ""
     exit
 }
 
@@ -42,7 +49,7 @@ if (-not (Test-Path -Path ".\VERSION")) {
 
 $version = Get-Content -Path ".\VERSION"
 
-if ((($version.GetType()).BaseType).Name -eq "Array"){
+if ((($version.GetType()).BaseType).Name -eq "Array") {
     Write-Host ""
     Write-Host -ForegroundColor White                  $version[1]
     Write-Host -ForegroundColor White       -NoNewLine $version[2].Substring(0, 13)
@@ -56,14 +63,10 @@ if ((($version.GetType()).BaseType).Name -eq "Array"){
     Write-Host -ForegroundColor DarkMagenta            $version[5].Substring(14)
     Write-Host -ForegroundColor White       -NoNewLine $version[6].Substring(0, 13)
     Write-Host -ForegroundColor DarkMagenta            $version[6].Substring(13)
-    Write-Host ""
 }
 
 if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
-    Write-Host -ForegroundColor Yellow -NoNewline "["
-    Write-Host -ForegroundColor Red    -NoNewline "!"
-    Write-Host -ForegroundColor Yellow -NoNewline "]"
-    Write-Host -ForegroundColor Yellow -NoNewLine " Warning: Recommended to run as"
+    coloredOutput " Warning: Recommended to run as" 2
     Write-Host -ForegroundColor Red               " administrator"
     Write-Host ""
 }
@@ -96,9 +99,11 @@ try {
             Write-Host ""
             coloredOutput " Updating..." 1
 
-            $script = Invoke-WebRequest -Uri "https://raw.githubusercontent.com/simonrenggli1/dupliscan/master/DupliScan.ps1" -UseBasicParsing
+            <#
+            $script = Invoke-WebRequest -Uri "https://raw.githubusercontent.com/toanic/dupliscanExtreme/main/DupliscanExtremeEdition/dupliscanExtremeEdition.ps1" -UseBasicParsing
             $script = $script.Content
-            $script | Out-File -FilePath ".\dupliscan.ps1" -Force
+            $script | Out-File -FilePath ".\dupliscanExtremeEdition.ps1" -Force
+            #>
 
             $version = Invoke-WebRequest -Uri "https://raw.githubusercontent.com/toanic/dupliscanExtreme/main/DupliscanExtremeEdition/VERSION" -UseBasicParsing
             $version = $version.Content
@@ -106,7 +111,13 @@ try {
             
             Write-Host ""
             coloredOutput " Updated to "
-            Write-Host -ForegroundColor Cyan             $latestVersion
+            Write-Host -ForegroundColor Cyan $latestVersion
+
+            if ((Get-Host).Name -eq "Windows PowerShell ISE Host") {
+                coloredOutput " Warning: This file has to be closed and reopened to use the updated version" 2
+                Write-Host ""
+            }
+
             exit
         } 
         else {
@@ -119,6 +130,7 @@ try {
 }
 catch {
     errorHandling "Failed to check for updates"
+    Write-Host ""
 }
 
 Write-Host ""
@@ -137,11 +149,13 @@ $mode = Read-Host " "
 
 if ($mode -eq "") {
     errorHandling "No input"
+    Write-Host ""
     exit
 }
 
 if ($mode -lt 1 -or $mode -gt 2) {
     errorHandling "Out of range"
+    Write-Host ""
     exit
 }
 
@@ -171,7 +185,7 @@ if ($mode -eq 1) {
 
     Write-Host ""
     coloredOutput " Select partition "
-    if ($number -eq 1){
+    if ($number -eq 1) {
         coloredText "(" 1 ")"
     }
     else {
@@ -181,11 +195,13 @@ if ($mode -eq 1) {
 
     if ($partitionSelected -eq "") {
         errorHandling "No input"
+        Write-Host ""
         exit
     }
 
     if ($partitionSelected -lt 1 -or $partitionSelected -gt $number) {
         errorHandling "Out of Range"
+        Write-Host ""
         exit
     }
     
@@ -203,16 +219,19 @@ if ($mode -eq 2) {
 
     if ($path -eq "") {
         errorHandling "No input"
+        Write-Host ""
         exit
     }
 
     if (-not (Test-Path $path)) {
         errorHandling "Path does not exist"
+        Write-Host ""
         exit
     }
 
     if (-not (Test-Path $path -PathType Container)) {
         errorHandling "Path is not a directory"
+        Write-Host ""
         exit
     }
 
@@ -227,8 +246,7 @@ if ($mode -eq 2) {
         $path = "$path\"
     }
 
-    if (((Get-CimInstance Win32_OperatingSystem).Caption) -NotLike "*Microsoft Windows*")
-    {
+    if (((Get-CimInstance Win32_OperatingSystem).Caption) -NotLike "*Microsoft Windows*") {
         $path = "\\?\" + $path
     }
 }
@@ -249,6 +267,7 @@ function CheckDuplicate($filePath, $fileName, $fileSize) {
     }
     catch {
         errorHandling "Error occured while checking duplicate: $_"
+        Write-Host ""
     }
 }
 
@@ -265,6 +284,7 @@ try {
         }
         catch {
             errorHandling "Error occured while processing file: $_"
+            Write-Host ""
         }
     }
 
