@@ -20,8 +20,7 @@ function coloredOutput ($text1, [int] $scheme = 0) {
         Write-Host -ForegroundColor Green            $text1
     }
     if ($scheme -eq 2) {
-        Write-Host ""
-        Write-Host -ForegroundColor Yellow -NoNewLine "["
+        Write-Host -ForegroundColor Yellow -NoNewLine "`n["
         Write-Host -ForegroundColor Red    -NoNewLine "!"
         Write-Host -ForegroundColor Yellow -NoNewLine "] $text1"
     }
@@ -38,8 +37,7 @@ function coloredOption ($text1, $text2, $text3, $text4 = "", $text5 = "") {
 
 # function for error messages
 function errorHandling ([string]$errorMessage, [int] $outputType = 0) {
-    Write-Host ""
-    Write-Host -ForegroundColor Red "[!] $errorMessage"
+    Write-Host -ForegroundColor Red "`n[!] $errorMessage"
     if ($outputType -eq 0) {
         Write-Host ""
     }
@@ -86,8 +84,7 @@ if ((($version.GetType()).BaseType).Name -eq "Array") {
 # check for administrator mode
 if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
     coloredOutput "Warning: Recommended to run as " 2
-    Write-Host -ForegroundColor Red "administrator"
-    Write-Host ""
+    Write-Host -ForegroundColor Red "administrator`n"
 }
 
 coloredOutput "Checking for updates..." 1
@@ -181,8 +178,7 @@ if ($mode -lt 1 -or $mode -gt 2) {
 # mode 1
 if ($mode -eq 1) {
     Write-Host ""
-    coloredOutput "Scanning partitions..." 1
-    Write-Host ""
+    coloredOutput "Scanning partitions...`n" 1
 
     # get available partitions
     $partitions = Get-Partition | Where-Object { $_.Size -gt 1000000000 }
@@ -225,8 +221,7 @@ if ($mode -eq 1) {
         exit
     }
     
-    coloredOutput "Scanning partition..." 1
-    Write-Host ""
+    coloredOutput "Scanning partition...`n" 1
 
     $driveLetter = $partitionInfo[$partitionSelected - 1]
 
@@ -384,8 +379,7 @@ catch {
 
 # output end of script via CLI
 Write-Host ""
-coloredOutput "Done" 1
-Write-Host ""
+coloredOutput "Done`n" 1
 
 # add ending to log
 Add-Content -Path ".\DupliScan.log" -Value "----------------------------------"
