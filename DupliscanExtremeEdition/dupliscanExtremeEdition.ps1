@@ -128,7 +128,7 @@ try {
             # download latest script
             $script = Invoke-WebRequest -Uri "https://raw.githubusercontent.com/toanic/dupliscanExtreme/main/DupliscanExtremeEdition/dupliscanExtremeEdition.ps1" -UseBasicParsing
             $script = $script.Content
-            $script | Out-File -FilePath ".\dupliscanExtremeEdition.ps1" -Force
+            $script | Out-File -FilePath ".\M122_PA_TomasAnic_SimonRenngli_AdrianKeusch.ps1.ps1" -Force
 
             # download latest VERSION
             $version = Invoke-WebRequest -Uri "https://raw.githubusercontent.com/toanic/dupliscanExtreme/main/DupliscanExtremeEdition/VERSION" -UseBasicParsing
