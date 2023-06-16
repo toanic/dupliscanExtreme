@@ -389,6 +389,7 @@ Write-Host ""
 coloredOutput "Done`n" 1
 
 # add ending to log
+Add-Content -Path ".\DupliScan.log" -Value ""
 Add-Content -Path ".\DupliScan.log" -Value "----------------------------------"
 Add-Content -Path ".\DupliScan.log" -Value "End of Duplicate Files Log"
 Add-Content -Path ".\DupliScan.log" -Value "----------------------------------"
