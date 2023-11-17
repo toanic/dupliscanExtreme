@@ -395,4 +395,5 @@ Add-Content -Path ".\DupliScan.log" -Value "End of Duplicate Files Log"
 Add-Content -Path ".\DupliScan.log" -Value "----------------------------------"
 Add-Content -Path ".\DupliScan.log" -Value ""
 
-$Host.UI.RawUI.WindowTitle = $Host.Name + " " + $Host.Version;
+Read-Host "Press any key to exit"
+quit
